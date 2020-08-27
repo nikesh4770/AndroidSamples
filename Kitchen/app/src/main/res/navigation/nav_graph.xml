@@ -5,9 +5,23 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/splashFragment">
 
+    <!--  Splash screen navigators  -->
     <fragment
         android:id="@+id/splashFragment"
-        android:name="com.nikesh.kitchenreciepies.SplashFragment"
+        android:name="com.nikesh.kitchenreciepies.view.ui.splash.SplashFragment"
         android:label="fragment_splash"
-        tools:layout="@layout/fragment_splash" />
+        tools:layout="@layout/fragment_splash" >
+        <action
+            android:id="@+id/action_splashFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@+id/splashFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+
+    <!-- Login Fragment navigators   -->
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.nikesh.kitchenreciepies.view.ui.login.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" />
 </navigation>
