@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.view.ImageSearchFragment">
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/image_search_edit_box"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_alignParentTop="true"
+        android:layout_margin="10dp"
+        android:layout_marginTop="45dp"
+        android:background="@drawable/bg_rounded_corner_search"
+        android:fontFamily="sans-serif-light"
+        android:hint="Enter image album, title etc.."
+        android:minHeight="45dp"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:textSize="13sp" />
+
+
+    <LinearLayout
+        android:id="@+id/search_empty_error_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/image_search_edit_box"
+        android:background="#EEE"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/img_search" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:text="Start typing to get your images!"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/image_search_grid_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/image_search_edit_box"
+        android:background="#EEE"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        tools:listitem="@layout/item_image_search_recycler" />
+
+</RelativeLayout>

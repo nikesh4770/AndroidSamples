@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center|top"
+    android:orientation="vertical"
+    android:paddingVertical="15dp"
+    tools:context=".ui.view.CommentDialogFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/comment_dialog_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_toStartOf="@+id/comment_dialog_add_text"
+            android:background="@drawable/bg_rounded_corner_search"
+            android:fontFamily="sans-serif"
+            android:hint="Enter Comment here"
+            android:paddingHorizontal="15dp"
+            android:textColor="#000"
+            android:textSize="14sp" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/comment_dialog_add_text"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/bg_rounded_corner_button"
+            android:gravity="center"
+            android:paddingHorizontal="25dp"
+            android:text="Add"
+            android:textColor="#FFF" />
+    </RelativeLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/comment_dialog_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center|top"
+        android:layout_marginTop="10dp"
+        android:minHeight="500dp"
+        tools:listitem="@layout/item_comment_image_recycler" />
+
+</LinearLayout>
