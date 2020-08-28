@@ -7,11 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.widget.Button
-import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.annotation.StringRes
+import androidx.appcompat.widget.AppCompatEditText
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -31,11 +31,12 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        loginViewModel = ViewModelProvider(this, LoginViewModelFactory()).get(LoginViewModel::class.java)
+        loginViewModel =
+            ViewModelProvider(this, LoginViewModelFactory()).get(LoginViewModel::class.java)
 
-        val usernameEditText = view.findViewById<EditText>(R.id.username)
-        val passwordEditText = view.findViewById<EditText>(R.id.password)
-        val loginButton = view.findViewById<Button>(R.id.login)
+        val usernameEditText = view.findViewById<AppCompatEditText>(R.id.username)
+        val passwordEditText = view.findViewById<AppCompatEditText>(R.id.password)
+        val loginButton = view.findViewById<AppCompatTextView>(R.id.login)
         val loadingProgressBar = view.findViewById<ProgressBar>(R.id.loading)
 
         loginViewModel.loginFormState.observe(viewLifecycleOwner,
