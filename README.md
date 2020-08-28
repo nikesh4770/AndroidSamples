@@ -1,4 +1,5 @@
 # AndroidSamples
 
 1. Imgurl : Load Images with API. Kotlin, MVVM, Dagger2, Room Database
+2. Kitchen : Add new recipes and dont forget share with other. Kotlin, Navigation Component
 
