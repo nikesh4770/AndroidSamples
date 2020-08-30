@@ -40,6 +40,7 @@
         android:fontFamily="@font/nunito_regular"
         android:text="@string/please_login_to_continue"
         android:textColor="@color/color_606060"
+        android:textCursorDrawable="@null"
         android:textSize="@dimen/font_14sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appCompatImageView2" />
