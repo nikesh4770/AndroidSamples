@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.calculator.CalculatorFragment">
+
+    <TextView
+        android:id="@+id/calc_multiply"
+        android:layout_width="50dp"
+        android:layout_height="45dp"
+        android:background="@drawable/bg_gradient_shape"
+        android:fontFamily="sans-serif-condensed-medium"
+        android:gravity="center"
+        android:text="*"
+        android:textColor="#FFF"
+        android:textSize="@dimen/font_18sp"
+        app:layout_constraintBottom_toTopOf="@+id/calc_add"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/edit_query"
+        app:layout_constraintTop_toTopOf="@id/edit_query"
+        app:layout_constraintVertical_chainStyle="spread" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/edit_query"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_marginEnd="80dp"
+        android:gravity="start|top"
+        android:inputType="numberDecimal|numberSigned"
+        android:digits="0123456789+-*/%"
+        android:imeOptions="actionDone"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/calc_add"
+        android:layout_width="50dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="4dp"
+        android:background="@drawable/bg_gradient_shape"
+        android:fontFamily="sans-serif-condensed-medium"
+        android:gravity="center"
+        android:text="+"
+        android:textColor="#FFF"
+        android:textSize="@dimen/font_18sp"
+        app:layout_constraintBottom_toTopOf="@+id/calc_divide"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/edit_query"
+        app:layout_constraintTop_toBottomOf="@+id/calc_multiply" />
+
+    <TextView
+        android:id="@+id/calc_divide"
+        android:layout_width="50dp"
+        android:layout_height="45dp"
+        android:background="@drawable/bg_gradient_shape"
+        android:fontFamily="sans-serif-condensed-medium"
+        android:gravity="center"
+        android:text="/"
+        android:textColor="#FFF"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/calc_subtract"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/edit_query"
+        app:layout_constraintTop_toBottomOf="@+id/calc_add" />
+
+    <TextView
+        android:id="@+id/calc_subtract"
+        android:layout_width="50dp"
+        android:layout_height="45dp"
+        android:background="@drawable/bg_gradient_shape"
+        android:fontFamily="sans-serif-condensed-medium"
+        android:gravity="center"
+        android:text="-"
+        android:textColor="#FFF"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/calc_clear"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/edit_query"
+        app:layout_constraintTop_toBottomOf="@+id/calc_divide" />
+
+    <TextView
+        android:id="@+id/calc_clear"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:background="@drawable/bg_gradient_shape"
+        android:fontFamily="sans-serif"
+        android:gravity="center"
+        android:text="Clear"
+        android:textColor="#FFF"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@id/edit_query"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/edit_query"
+        app:layout_constraintTop_toBottomOf="@+id/calc_subtract" />
+
+
+    <TextView
+        android:id="@+id/calc_ans"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:background="@drawable/bg_gradient_shape"
+        android:fontFamily="sans-serif"
+        android:gravity="center"
+        android:paddingHorizontal="20dp"
+        android:text="Ans"
+        android:textColor="#FFF"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@+id/calc_history"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@id/edit_query"
+        app:layout_constraintTop_toBottomOf="@id/edit_query" />
+
+    <TextView
+        android:id="@+id/calc_history"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:background="@drawable/bg_gradient_shape"
+        android:gravity="center"
+        android:text="History"
+        android:textColor="#FFF"
+        app:layout_constraintEnd_toEndOf="@id/edit_query"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/calc_ans"
+        app:layout_constraintTop_toBottomOf="@+id/edit_query" />
+
+    <TextView
+        android:id="@+id/calc_history_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:textColor="#000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/calc_ans" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
