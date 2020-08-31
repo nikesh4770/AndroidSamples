@@ -2,7 +2,6 @@ package com.nikesh.madscalculator.ui.calculator
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -12,29 +11,15 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.nikesh.madscalculator.R
 import kotlinx.android.synthetic.main.fragment_calculator.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 
 class CalculatorFragment : Fragment(), View.OnClickListener, TextView.OnEditorActionListener {
 
+    private lateinit var calcViewModel: CalcViewModel
     private lateinit var mContext: Context
-    private var previousAns: Int = 0
-    private var historyList: ArrayList<String> = ArrayList(10)
-    private val documentReference = Firebase.firestore.document("usersCollection/admin")
-
-    // without type annotation in lambda expression
-    val addition: (Int, Int) -> Int = { a, b -> a + b }
-    val subtraction: (Int, Int) -> Int = { a, b -> a - b }
-    val multiplication: (Int, Int) -> Int = { a, b -> a * b }
-    val division: (Int, Int) -> Int = { a, b -> a / b }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -53,6 +38,9 @@ class CalculatorFragment : Fragment(), View.OnClickListener, TextView.OnEditorAc
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        calcViewModel = ViewModelProvider(this, CalcViewModelFactory())
+            .get(CalcViewModel::class.java)
+
         calc_ans.setOnClickListener(this)
         calc_history.setOnClickListener(this)
         calc_clear.setOnClickListener(this)
@@ -62,83 +50,18 @@ class CalculatorFragment : Fragment(), View.OnClickListener, TextView.OnEditorAc
         calc_subtract.setOnClickListener(this)
 
         edit_query.setOnEditorActionListener(this)
-    }
 
+        calcViewModel.prevResult.observe(viewLifecycleOwner, Observer {
+            edit_query.setText(it.toString())
+            edit_query.text?.lastIndex?.let { it1 -> edit_query.setSelection(it1 + 1) }
+        })
 
-    private fun performOperation(query: String): Int {
-        //Default ans
-        var ans = 0
-        //Replace spaces if any
-        val str = query.replace("\\s".toRegex(), "")
-
-        // Init array
-        val dividedArray: ArrayList<String> = ArrayList(0)
-        dividedArray.addAll(str.split("(?<=[-+*/])|(?=[-+*/])".toRegex()))
-
-        //Safety check
-        if (dividedArray.isNullOrEmpty()) {
-            Log.e(TAG, "performOperation: empty array")
-            return ans
-        }
-
-        while (dividedArray.size > 1) {
-            var index = -1
-
-            // Check all operations as per MADS priority
-            // If multiply present
-            if (dividedArray.contains("*") && dividedArray.size >= 3) {
-                index = dividedArray.indexOf("*")
-                if (index > 0) {
-                    ans = multiplication(
-                        dividedArray[index - 1].toInt(),
-                        dividedArray[index + 1].toInt()
-                    )
-                    dividedArray[index - 1] = ans.toString()
-                    dividedArray.removeAt(index + 1)
-                    dividedArray.removeAt(index)
-                }
-                // For Addition
-            } else if (dividedArray.contains("+") && dividedArray.size >= 3) {
-                index = dividedArray.indexOf("+")
-                if (index > 0) {
-                    ans = addition(dividedArray[index - 1].toInt(), dividedArray[index + 1].toInt())
-                    dividedArray[index - 1] = ans.toString()
-                    dividedArray.removeAt(index + 1)
-                    dividedArray.removeAt(index)
-                }
-                // For Division
-            } else if (dividedArray.contains("/") && dividedArray.size >= 3) {
-                index = dividedArray.indexOf("/")
-                if (index > 0) {
-
-                    // Very Important Note in calculator
-                    // Handling of divide by 0
-                    if (dividedArray[index - 1] == "0" || dividedArray[index + 1] == "0") {
-                        return 0
-                    }
-
-                    ans = division(dividedArray[index - 1].toInt(), dividedArray[index + 1].toInt())
-                    dividedArray[index - 1] = ans.toString()
-                    dividedArray.removeAt(index + 1)
-                    dividedArray.removeAt(index)
-                }
-                // For subtraction
-            } else if (dividedArray.contains("-") && dividedArray.size >= 3) {
-                index = dividedArray.indexOf("-")
-                if (index > 0) {
-                    ans = subtraction(
-                        dividedArray[index - 1].toInt(),
-                        dividedArray[index + 1].toInt()
-                    )
-                    dividedArray[index - 1] = ans.toString()
-                    dividedArray.removeAt(index + 1)
-                    dividedArray.removeAt(index)
-                }
+        calcViewModel.historyList.observe(viewLifecycleOwner, Observer {
+            if(it.isNullOrEmpty()){
+                return@Observer
             }
-        }
-
-        previousAns = ans
-        return ans
+            showHistoryList(it)
+        })
     }
 
 
@@ -174,52 +97,19 @@ class CalculatorFragment : Fragment(), View.OnClickListener, TextView.OnEditorAc
         }
     }
 
-    private fun getHistoryListFromFB(): ArrayList<String> {
-
-        CoroutineScope(IO).launch {
-            val result = documentReference.get().await().get("history") as ArrayList<String>
-
-            Log.e(TAG, "getHistoryListFromFB: ${result?.size} => $result")
-            withContext(Main) {
-                showHistoryList(result)
-            }
-        }
-        return ArrayList()
+    private fun getHistoryListFromFB() {
+        calcViewModel.fetchFromFireStore()
     }
 
     private fun showHistoryList(result: ArrayList<String>) {
-        historyList = result
         calc_history_text.text = ""
-        historyList.forEach {
+        result.asReversed().forEach {
             calc_history_text.text = "${calc_history_text.text}\n$it"
         }
     }
 
     private fun onAnsClick(view: View) {
-
-        val expression = edit_query.text.toString()
-        previousAns = performOperation(expression)
-        edit_query.setText(previousAns.toString())
-        edit_query.text?.lastIndex?.let { it1 -> edit_query.setSelection(it1 + 1) }
-
-        historyList.add(0, "$expression = $previousAns")
-        if (historyList.size > 10) {
-            historyList.removeAt(10)
-        }
-
-        // For temporary purpose and list is small
-        storeInSharedPreference()
-    }
-
-
-    private fun storeInSharedPreference() {
-
-        documentReference.set(
-            hashMapOf(
-                "history" to historyList
-            )
-        )
-
+        calcViewModel.calculate(edit_query.text.toString())
     }
 
     override fun onEditorAction(view: TextView?, actionId: Int, event: KeyEvent?): Boolean {
