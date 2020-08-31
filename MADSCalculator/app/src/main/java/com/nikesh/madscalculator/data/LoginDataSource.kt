@@ -14,17 +14,15 @@ class LoginDataSource {
 
     suspend fun login(username: String, password: String): Result<LoggedInUser> {
         val doc = getUser()
-        doc.forEach { documentSnapshot ->
-            documentSnapshot.data?.let {
-                if (it["user"] == username && it["password"] == password) {
-                    return Result.Success(LoggedInUser("admin", "Nikesh Mahajan"))
-                }
-            }
+        if (doc == null || !doc.exists()) {
+            return Result.Error(IOException("Error logging in"))
+        }
+        if (doc["password"] == password) {
+            return Result.Success(LoggedInUser("admin", "Nikesh Mahajan"))
         }
         return Result.Error(IOException("Error logging in"))
     }
 
-    private suspend fun getUser(): MutableList<DocumentSnapshot> =
-        Firebase.firestore.collection("usersCollection")
-            .get().await().documents
+    private suspend fun getUser(): DocumentSnapshot? =
+        Firebase.firestore.document("usersCollection/admin").get().await()
 }
