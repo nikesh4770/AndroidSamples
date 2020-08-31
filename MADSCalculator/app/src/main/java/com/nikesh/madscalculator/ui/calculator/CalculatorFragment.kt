@@ -1,8 +1,6 @@
 package com.nikesh.madscalculator.ui.calculator
 
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
@@ -14,21 +12,23 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.nikesh.madscalculator.R
 import kotlinx.android.synthetic.main.fragment_calculator.*
-import java.lang.reflect.Type
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
 class CalculatorFragment : Fragment(), View.OnClickListener, TextView.OnEditorActionListener {
 
     private lateinit var mContext: Context
     private var previousAns: Int = 0
     private var historyList: ArrayList<String> = ArrayList(10)
-    private val collection = FirebaseFirestore.getInstance().collection("usersCollection").get()
+    private val documentReference = Firebase.firestore.document("usersCollection/admin")
 
     // without type annotation in lambda expression
     val addition: (Int, Int) -> Int = { a, b -> a + b }
@@ -154,23 +154,7 @@ class CalculatorFragment : Fragment(), View.OnClickListener, TextView.OnEditorAc
                     edit_query.setText("")
                 }
                 R.id.calc_history -> {
-
-                    if (historyList.isNullOrEmpty()) {
-                        val prefs = mContext.getSharedPreferences(
-                            mContext.packageName + ".user",
-                            MODE_PRIVATE
-                        )
-                        val str = prefs.getString("HISTORY_LIST", null)
-                        val type: Type = object : TypeToken<ArrayList<String?>?>() {}.type
-                        str?.let {
-                            historyList = Gson().fromJson(str, type)
-                        }
-                    }
-                    calc_history_text.text = ""
-                    historyList.forEach {
-                        calc_history_text.text = "${calc_history_text.text}\n$it"
-                    }
-
+                    getHistoryListFromFB()
                 }
                 R.id.calc_multiply -> {
                     edit_query.append(calc_multiply.text)
@@ -187,6 +171,27 @@ class CalculatorFragment : Fragment(), View.OnClickListener, TextView.OnEditorAc
                 else -> {
                 }
             }
+        }
+    }
+
+    private fun getHistoryListFromFB(): ArrayList<String> {
+
+        CoroutineScope(IO).launch {
+            val result = documentReference.get().await().get("history") as ArrayList<String>
+
+            Log.e(TAG, "getHistoryListFromFB: ${result?.size} => $result")
+            withContext(Main) {
+                showHistoryList(result)
+            }
+        }
+        return ArrayList()
+    }
+
+    private fun showHistoryList(result: ArrayList<String>) {
+        historyList = result
+        calc_history_text.text = ""
+        historyList.forEach {
+            calc_history_text.text = "${calc_history_text.text}\n$it"
         }
     }
 
@@ -208,12 +213,13 @@ class CalculatorFragment : Fragment(), View.OnClickListener, TextView.OnEditorAc
 
 
     private fun storeInSharedPreference() {
-        val prefs = mContext.getSharedPreferences(mContext.packageName+ ".user", MODE_PRIVATE)
-        val gson = Gson()
-        val json = gson.toJson(historyList)
-        val prefEditor = prefs.edit()
-        prefEditor?.putString("HISTORY_LIST", json)
-        prefEditor?.apply()
+
+        documentReference.set(
+            hashMapOf(
+                "history" to historyList
+            )
+        )
+
     }
 
     override fun onEditorAction(view: TextView?, actionId: Int, event: KeyEvent?): Boolean {
