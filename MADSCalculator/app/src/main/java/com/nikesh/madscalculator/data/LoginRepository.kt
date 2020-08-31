@@ -30,18 +30,18 @@ class LoginRepository(val dataSource: LoginDataSource) {
         user = null
     }
 
-    suspend fun login(username: String, password: String): Result<LoggedInUser> = coroutineScope {
+    suspend fun login(username: String, password: String): Result<LoggedInUser> {
         // handle login
-        val result = async { dataSource.login(username, password) }.await()
+        val result = dataSource.login(username, password)
 
         if (result is Result.Success) {
             setLoggedInUser(result.data)
         }
 
-        result
+        return result
     }
 
-    private fun setLoggedInUser(loggedInUser: LoggedInUser) {
+    fun setLoggedInUser(loggedInUser: LoggedInUser) {
         this.user = loggedInUser
         // If user credentials will be cached in local storage, it is recommended it be encrypted
         // @see https://developer.android.com/training/articles/keystore
