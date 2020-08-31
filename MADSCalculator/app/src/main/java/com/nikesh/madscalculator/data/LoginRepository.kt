@@ -1,6 +1,10 @@
 package com.nikesh.madscalculator.data
 
 import com.nikesh.madscalculator.data.model.LoggedInUser
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 
 /**
  * Class that requests authentication and user information from the remote data source and
@@ -24,19 +28,17 @@ class LoginRepository(val dataSource: LoginDataSource) {
 
     fun logout() {
         user = null
-//        dataSource.logout()
     }
 
-    fun login(username: String, password: String): Result<LoggedInUser> {
+    suspend fun login(username: String, password: String): Result<LoggedInUser> = coroutineScope {
         // handle login
-        val result = dataSource.login(username, password)
+        val result = async { dataSource.login(username, password) }.await()
 
         if (result is Result.Success) {
             setLoggedInUser(result.data)
-
         }
 
-        return result
+        result
     }
 
     private fun setLoggedInUser(loggedInUser: LoggedInUser) {

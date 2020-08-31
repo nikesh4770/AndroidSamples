@@ -14,6 +14,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.nikesh.madscalculator.R
@@ -25,6 +26,7 @@ class CalculatorFragment : Fragment(), View.OnClickListener, TextView.OnEditorAc
     private lateinit var mContext: Context
     private var previousAns: Int = 0
     private var historyList: ArrayList<String> = ArrayList(10)
+    private val db = FirebaseFirestore.getInstance()
 
     // without type annotation in lambda expression
     val addition: (Int, Int) -> Int = { a, b -> a + b }
@@ -152,7 +154,10 @@ class CalculatorFragment : Fragment(), View.OnClickListener, TextView.OnEditorAc
                 R.id.calc_history -> {
 
                     if (historyList.isNullOrEmpty()) {
-                        val prefs = mContext.getSharedPreferences(mContext.packageName + ".user", MODE_PRIVATE)
+                        val prefs = mContext.getSharedPreferences(
+                            mContext.packageName + ".user",
+                            MODE_PRIVATE
+                        )
                         val str = prefs.getString("HISTORY_LIST", null)
                         val type: Type = object : TypeToken<ArrayList<String?>?>() {}.type
                         str?.let {
@@ -201,12 +206,8 @@ class CalculatorFragment : Fragment(), View.OnClickListener, TextView.OnEditorAc
 
 
     private fun storeInSharedPreference() {
-        val prefs = mContext.getSharedPreferences(mContext.packageName+ ".user", MODE_PRIVATE)
-        val gson = Gson()
-        val json = gson.toJson(historyList)
-        val prefEditor = prefs.edit()
-        prefEditor?.putString("HISTORY_LIST", json)
-        prefEditor?.apply()
+
+
     }
 
     override fun onEditorAction(view: TextView?, actionId: Int, event: KeyEvent?): Boolean {

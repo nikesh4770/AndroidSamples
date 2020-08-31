@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "316597116951",
+    "firebase_url": "https://mad-s-calculator.firebaseio.com",
+    "project_id": "mad-s-calculator",
+    "storage_bucket": "mad-s-calculator.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:316597116951:android:118479df8ae7e0819f3c52",
+        "android_client_info": {
+          "package_name": "com.nikesh.madscalculator"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "316597116951-eon755louqe3515luicciipqlqp767f0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCwEBkrgX_FVyzYucBAbjZ8kcJpvFgiTWc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "316597116951-eon755louqe3515luicciipqlqp767f0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

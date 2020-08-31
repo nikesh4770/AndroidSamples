@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 30
@@ -12,6 +13,8 @@ android {
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
+
+        multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -40,6 +43,10 @@ dependencies {
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
     //Gson
     implementation "com.google.code.gson:gson:2.8.5"
+
+    // Firebase with coroutines
+    implementation 'com.google.firebase:firebase-firestore-ktx:21.6.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.1.1'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'

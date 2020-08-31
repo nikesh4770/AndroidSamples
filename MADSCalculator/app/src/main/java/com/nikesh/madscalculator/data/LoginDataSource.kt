@@ -1,6 +1,18 @@
 package com.nikesh.madscalculator.data
 
+import android.util.Log
+import com.google.android.gms.tasks.Task
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.nikesh.madscalculator.data.model.LoggedInUser
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import java.io.IOException
 
 /**
@@ -8,18 +20,18 @@ import java.io.IOException
  */
 class LoginDataSource {
 
-    fun login(username: String, password: String): Result<LoggedInUser> {
-        return try {
-
-            val fakeUser = LoggedInUser("admin", "Nikesh Mahajan")
-            // Just for demo purpose only
-            if (username == "admin" && password == "admin" ) {
-                Result.Success(fakeUser)
-            } else {
-                Result.Error(IOException("Credential not valid"))
+    suspend fun login(username: String, password: String): Result<LoggedInUser> {
+        val doc = getUser()
+        doc.forEach { documentSnapshot ->
+            documentSnapshot.data?.let {
+                if (it["user"] == username && it["password"] == password) {
+                    return Result.Success(LoggedInUser("admin", "Nikesh Mahajan"))
+                }
             }
-        } catch (e: Throwable) {
-            Result.Error(IOException("Error logging in", e))
         }
+        return Result.Error(IOException("Error logging in"))
     }
+
+    suspend fun getUser() = Firebase.firestore.collection("usersCollection")
+        .get().await().documents
 }
