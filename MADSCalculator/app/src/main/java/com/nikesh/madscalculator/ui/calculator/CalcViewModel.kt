@@ -10,22 +10,22 @@ import kotlinx.coroutines.launch
 
 class CalcViewModel(private val calcRepository: CalcRepository) : ViewModel() {
 
-    private val _result = MutableLiveData<Int>()
-    val prevResult: LiveData<Int> = _result
+    private val _result = MutableLiveData<Double>()
+    val prevResult: LiveData<Double> = _result
 
     private val _historyList: MutableLiveData<ArrayList<String>> = MutableLiveData()
     val historyList: LiveData<ArrayList<String>> = _historyList
 
     // without type annotation in lambda expression
-    val addition: (Int, Int) -> Int = { a, b -> a + b }
-    val subtraction: (Int, Int) -> Int = { a, b -> a - b }
-    val multiplication: (Int, Int) -> Int = { a, b -> a * b }
-    val division: (Int, Int) -> Int = { a, b -> a / b }
+    val addition: (Double, Double) -> Double = { a, b -> a + b }
+    val subtraction: (Double, Double) -> Double = { a, b -> a - b }
+    val multiplication: (Double, Double) -> Double = { a, b -> a * b }
+    val division: (Double, Double) -> Double = { a, b -> a / b }
 
 
     private fun performOperation(query: String) {
         //Default ans
-        var ans = 0
+        var ans = 0.0
         //Replace spaces if any
         val str = query.replace("\\s".toRegex(), "")
 
@@ -48,8 +48,8 @@ class CalcViewModel(private val calcRepository: CalcRepository) : ViewModel() {
                 index = dividedArray.indexOf("*")
                 if (index > 0) {
                     ans = multiplication(
-                        dividedArray[index - 1].toInt(),
-                        dividedArray[index + 1].toInt()
+                        dividedArray[index - 1].toDouble(),
+                        dividedArray[index + 1].toDouble()
                     )
                     dividedArray[index - 1] = ans.toString()
                     dividedArray.removeAt(index + 1)
@@ -59,7 +59,7 @@ class CalcViewModel(private val calcRepository: CalcRepository) : ViewModel() {
             } else if (dividedArray.contains("+") && dividedArray.size >= 3) {
                 index = dividedArray.indexOf("+")
                 if (index > 0) {
-                    ans = addition(dividedArray[index - 1].toInt(), dividedArray[index + 1].toInt())
+                    ans = addition(dividedArray[index - 1].toDouble(), dividedArray[index + 1].toDouble())
                     dividedArray[index - 1] = ans.toString()
                     dividedArray.removeAt(index + 1)
                     dividedArray.removeAt(index)
@@ -76,7 +76,7 @@ class CalcViewModel(private val calcRepository: CalcRepository) : ViewModel() {
                         return
                     }
 
-                    ans = division(dividedArray[index - 1].toInt(), dividedArray[index + 1].toInt())
+                    ans = division(dividedArray[index - 1].toDouble(), dividedArray[index + 1].toDouble())
                     dividedArray[index - 1] = ans.toString()
                     dividedArray.removeAt(index + 1)
                     dividedArray.removeAt(index)
@@ -86,8 +86,8 @@ class CalcViewModel(private val calcRepository: CalcRepository) : ViewModel() {
                 index = dividedArray.indexOf("-")
                 if (index > 0) {
                     ans = subtraction(
-                        dividedArray[index - 1].toInt(),
-                        dividedArray[index + 1].toInt()
+                        dividedArray[index - 1].toDouble(),
+                        dividedArray[index + 1].toDouble()
                     )
                     dividedArray[index - 1] = ans.toString()
                     dividedArray.removeAt(index + 1)
